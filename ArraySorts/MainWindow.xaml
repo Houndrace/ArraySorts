@@ -7,8 +7,8 @@
     xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Sorter"
-    Width="900"
-    Height="550"
+    Width="960"
+    Height="640"
     d:DataContext="{d:DesignInstance Type=local:MainWindowViewModel}"
     Background="{DynamicResource MaterialDesignPaper}"
     FontFamily="{materialDesign:MaterialDesignFont}"
@@ -24,54 +24,76 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-
-        <StackPanel Grid.ColumnSpan="6" Margin="8">
+        <!--#region Header-->
+        <StackPanel Grid.ColumnSpan="2" Margin="8">
             <TextBlock Style="{StaticResource MaterialDesignHeadline4TextBlock}" Text="Сортировка массива" />
             <Separator Style="{StaticResource MaterialDesignSeparator}" />
         </StackPanel>
-        <ScrollViewer Grid.Row="1" Margin="8,0">
-            <StackPanel>
-                <TextBlock
-                    Margin="0,0,0,8"
-                    Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                    Text="Генерация массива" />
 
-                <TextBlock Margin="0,0,0,8" Text="Размерность" />
-                <TextBox
-                    Margin="0,0,0,24"
-                    materialDesign:HintAssist.Hint="Введите размерность массива"
-                    materialDesign:HintAssist.IsFloating="False"
-                    materialDesign:TextFieldAssist.HasClearButton="True"
-                    MaxLength="6"
-                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
-                    Text="{Binding Length, Mode=TwoWay, ValidatesOnNotifyDataErrors=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged}" />
+        <Button
+            Grid.Column="2"
+            Margin="8"
+            HorizontalAlignment="Right"
+            Command="{Binding ClearCommand}"
+            Content="Очистить" />
+        <!--#endregion-->
 
-                <Button
-                    Margin="0,0,0,24"
-                    HorizontalAlignment="Left"
-                    Command="{Binding GenerateNumberArrayCommand}"
-                    Content="Сгенерировать" />
+        <!--#region Array generation-->
+        <TextBlock
+            Grid.Row="1"
+            Margin="8,0,8,16"
+            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+            Text="Генерация массива" />
 
-                <TextBlock
-                    Margin="0,0,0,8"
-                    Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
-                    Text="Сгенерированный массив:" />
+        <StackPanel Grid.Row="2" Margin="8,0">
 
 
+            <TextBlock Margin="0,0,0,8" Text="Размерность" />
+            <TextBox
+                Margin="0,0,0,24"
+                materialDesign:HintAssist.Hint="Введите размерность массива"
+                materialDesign:HintAssist.IsFloating="False"
+                materialDesign:TextFieldAssist.HasClearButton="True"
+                MaxLength="6"
+                Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                Text="{Binding Length}">
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding GenerateNumberArrayCommand}" />
+                </TextBox.InputBindings>
+            </TextBox>
 
-                <TextBlock Text="{Binding GeneratedArrayResult}" TextWrapping="Wrap" />
+            <Button
+                Margin="0,0,0,24"
+                HorizontalAlignment="Left"
+                Command="{Binding GenerateNumberArrayCommand}"
+                Content="Сгенерировать" />
 
+            <TextBlock
+                Margin="0,0,0,8"
+                Style="{StaticResource MaterialDesignSubtitle1TextBlock}"
+                Text="Сгенерированный массив:" />
+        </StackPanel>
 
-
-
-
-            </StackPanel>
+        <ScrollViewer Grid.Row="3" Margin="8,0">
+            <TextBlock Text="{Binding GeneratedStringResult}" TextWrapping="Wrap" />
         </ScrollViewer>
+        <!--#endregion-->
+
+        <!--#region Array sort-->
+        <TextBlock
+            Grid.Row="1"
+            Grid.Column="1"
+            Margin="8,0,8,8"
+            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+            Text="Сортировка" />
 
         <StackPanel
-            Grid.Row="1"
+            Grid.Row="2"
+            Grid.RowSpan="3"
             Grid.Column="1"
             Margin="8,0">
             <GroupBox
@@ -112,19 +134,43 @@
                 </StackPanel>
             </GroupBox>
 
-            <Button Command="{Binding SortNumberArrayCommand}" Content="Отсортировать" />
-        </StackPanel>
+            <Button
+                Margin="0,0,0,24"
+                Command="{Binding SortNumberArrayCommand}"
+                Content="Отсортировать" />
 
-        <StackPanel
+            <TextBlock
+                Margin="0,0,0,16"
+                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+                Text="Оценка быстродействия" />
+
+            <Button
+                Margin="0,0,0,8"
+                Command="{Binding EvaluatePerformanceCommand}"
+                Content="Оценить" />
+
+            <TextBlock
+                Style="{StaticResource MaterialDesignCaptionTextBlock}"
+                Text="Данная кнопка позволяет оценить быстродействие выбранного вида сортировки. Сортировка выполняется 5 раз и выбирается лучшее время для текущего массива."
+                TextWrapping="Wrap" />
+        </StackPanel>
+        <!--#endregion-->
+
+        <!--#region Result-->
+        <TextBlock
             Grid.Row="1"
             Grid.Column="2"
-            Margin="8,0">
-            <TextBlock
-                Margin="0,0,0,8"
-                Style="{StaticResource MaterialDesignHeadline6TextBlock}"
-                Text="Результат" />
+            Margin="8,0,8,8"
+            Style="{StaticResource MaterialDesignHeadline6TextBlock}"
+            Text="Результат" />
 
-            <TextBlock Text="{Binding SortedArrayResult}" TextWrapping="WrapWithOverflow" />
-        </StackPanel>
+        <ScrollViewer
+            Grid.Row="2"
+            Grid.RowSpan="2"
+            Grid.Column="2"
+            Margin="8,0">
+            <TextBlock Text="{Binding SortedStringResult}" TextWrapping="WrapWithOverflow" />
+        </ScrollViewer>
+        <!--#endregion-->
     </Grid>
 </Window>
